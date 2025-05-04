@@ -1,0 +1,215 @@
+---
+layout: default
+title: Company Reputation Tracker
+permalink: /
+---
+
+<!-- Add Bootstrap CSS if not already included in the theme -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+
+<!-- Add custom CSS for charts -->
+<style>
+  .chart-container {
+    height: 300px;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .card {
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .chart-container {
+      height: 250px;
+    }
+  }
+  
+  .company-selector {
+    margin-bottom: 20px;
+  }
+  
+  .company-selector select {
+    max-width: 300px;
+  }
+  
+  .company-info {
+    margin-bottom: 20px;
+  }
+  
+  .company-info h3 {
+    margin-bottom: 5px;
+  }
+  
+  .company-info p {
+    margin-bottom: 5px;
+  }
+</style>
+
+<div class="container mt-4">
+  <div class="row">
+    <!-- Sidebar/Left column -->
+    <div class="col-md-3">
+      <div class="p-3 bg-light rounded">
+        <h4 class="mb-3">About</h4>
+        <p>
+          This dashboard tracks company mentions from news sources and analyzes sentiment using AI.
+          Data is updated periodically through automated processes.
+        </p>
+      </div>
+    </div>
+    
+    <!-- Main content/Right column -->
+    <div class="col-md-9">
+      <h2>Company Reputation Dashboard</h2>
+      
+      <!-- Company Selector (hidden until loaded) -->
+      <div id="company-selector" class="company-selector" style="display: none;">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <h5 class="card-title mb-0 me-3">Select Company:</h5>
+              <select id="company-dropdown" class="form-select">
+                <option value="">Loading companies...</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Company Info Section (hidden until loaded) -->
+      <div id="company-info-section" class="company-info" style="display: none;">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Company Information</h5>
+            <div id="company-info">
+              <p>Loading company information...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Loading indicator -->
+      <div id="loading-indicator" class="text-center my-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading dashboard data...</p>
+      </div>
+      
+      <!-- Dashboard content (hidden until loaded) -->
+      <div id="dashboard-content" style="display: none;">
+        <!-- Metrics Row -->
+        <div class="row mb-4">
+          <div class="col-md-3">
+            <div class="card">
+              <div class="card-body text-center">
+                <h3 id="total-mentions">--</h3>
+                <p class="text-muted">Total Mentions</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card">
+              <div class="card-body text-center">
+                <h3 id="sentiment-score">--</h3>
+                <p class="text-muted">Sentiment Score</p>
+                <div class="progress" style="height: 10px;">
+                  <div class="progress-bar bg-danger" id="negative-progress" style="width: 0%"></div>
+                  <div class="progress-bar bg-success" id="positive-progress" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="card">
+              <div class="card-body text-center">
+                <h3 id="positive-pct">--</h3>
+                <p class="text-muted text-success">Positive</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="card">
+              <div class="card-body text-center">
+                <h3 id="neutral-pct">--</h3>
+                <p class="text-muted text-secondary">Neutral</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="card">
+              <div class="card-body text-center">
+                <h3 id="negative-pct">--</h3>
+                <p class="text-muted text-danger">Negative</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Charts Row - Modified to prevent overlapping -->
+        <div class="row">
+          <!-- First Chart -->
+          <div class="col-lg-6 col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Sentiment Distribution</h5>
+                <div id="sentiment-chart" class="chart-container"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Second Chart -->
+          <div class="col-lg-6 col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Sentiment Over Time</h5>
+                <div id="timeline-chart" class="chart-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Mentions -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Recent Mentions</h5>
+            <div id="mentions-table">
+              <p>Loading mentions data...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Load JavaScript for charts -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+  // Function to show dashboard content
+  function showDashboard() {
+    document.getElementById('loading-indicator').style.display = 'none';
+    document.getElementById('dashboard-content').style.display = 'block';
+    document.getElementById('company-selector').style.display = 'block';
+    document.getElementById('company-info-section').style.display = 'block';
+    
+    // Trigger resize event to make sure charts are rendered correctly
+    window.dispatchEvent(new Event('resize'));
+  }
+  
+  // Function to handle errors
+  function handleError(error) {
+    document.getElementById('loading-indicator').style.display = 'none';
+    document.getElementById('dashboard-content').style.display = 'block';
+    document.getElementById('mentions-table').innerHTML = `
+      <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Error Loading Dashboard</h4>
+        <p>${error.message}</p>
+        <hr>
+        <p class="mb-0">Please check the console for more details.</p>
+      </div>
+    `;
+  }
+</script>
+<script src="assets/js/dashboard.js"></script>

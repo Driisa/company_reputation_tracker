@@ -1,0 +1,30 @@
+# Web Dashboard
+dash>=2.9.0
+dash-bootstrap-components>=1.4.0
+plotly>=5.13.0
+
+# Database
+sqlalchemy>=2.0.0
+
+# API and HTTP
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Environment and Configuration
+python-dotenv>=1.0.0
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.23.0
+
+# Machine Learning (optional, for trend lines)
+scikit-learn>=1.2.0
+
+# AI and NLP
+openai>=1.0.0
+
+# Utilities
+colorama>=0.4.4
+
+# Logging and Debugging
