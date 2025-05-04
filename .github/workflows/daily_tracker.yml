@@ -3,7 +3,7 @@ name: Daily Company Reputation Tracker
 on:
   schedule:
     - cron: '0 6 * * *'  # Run at 6:00 AM UTC every day
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:     # Manual trigger
   push:
     branches:
       - main
